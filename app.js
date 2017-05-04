@@ -13,7 +13,7 @@ function XFParse(url) { // XenForo Parser
   url.href = url.href.replace(/\/(?:reader)|(?:threadmarks)(?:\/(?:page\/[0-9]*\/?)?)?$/,'');
   JSDOM.fromURL(url).then((doc) => {
     dom = doc;
-  }
+  });
   this.fromFragment = () => { // retrieves element hash links to
     return document.getElementById(dom.location.hash.substr(1));
   }

@@ -43,7 +43,7 @@ function XFParse(url) { // XenForo Parser
     var posts = []; // array of strings of posts
     posts.push(dom.getElementsByClassName('message').forEach((post,i,array) => {
       array[i] = this.getPostContent(post);
-    });
+    }));
     return posts;
   }
 }

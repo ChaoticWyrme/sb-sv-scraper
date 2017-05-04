@@ -59,3 +59,4 @@ function parseThread(url,callback) { // will fallback on default parsers if no c
     parser = new callback(url);
   }
 }
+parseThread(url);

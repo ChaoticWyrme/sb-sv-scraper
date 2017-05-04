@@ -20,6 +20,11 @@ function XFParse(url) { // XenForo Parser
   this.getAuthor = (author) => {
     return dom.querySelectorAll("li[data-author='" + author + "']"); // selects every list item
   }
+  this.resetDOM() {
+    JSDOM.fromURL(url).then((doc) => {
+      dom = doc;
+    });
+  }
   this.getPostContent (post) => { // takes input from getAuthor
     var content = post.getElementsByClassName("messageText")[0];
     let mark = content.getElementsByClassName("messageTextEndMarker");
@@ -27,14 +32,17 @@ function XFParse(url) { // XenForo Parser
     return content;
   }
   this.getThreadmarks() {
-    var dom;
     JSDOM.fromURL(url.href.replace(/\/?$/,'reader')).then((doc) => {
-    dom = doc;
-    }
+      dom = doc;
+      
+    });
   }
 }
-
-function parseThread(url,callback) { // will fallback on default parsers if no callback
+this.getAllPosts() {
+  var posts = []; // array of strings of posts
+  posts.append(dom.getElementsByClassName('message').forEach(this.getPostContent()));
+}
+this.parseThread(url,callback) { // will fallback on default parsers if no callback
   url = new URL(url);
   if(typeof callback !== 'function') {
     var parser = url.host;

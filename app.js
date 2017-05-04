@@ -39,7 +39,7 @@ function XFParse(url) { // XenForo Parser
       return posts;
     });
   }
-  this.getAllPosts() {
+  this.getAllPosts = () => {
     var posts = []; // array of strings of posts
     posts.push(dom.getElementsByClassName('message').forEach((post,i,array) => {
       array[i] = this.getPostContent(post)));

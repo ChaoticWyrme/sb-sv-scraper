@@ -48,7 +48,7 @@ function XFParse(url) { // XenForo Parser
   }
 }
 function parseThread(url,callback) { // will fallback on default parsers if no callback
-  url = new URL(url);
+  url = new URL(url); // need to fix this so it will work in node.
   if(typeof callback !== 'function') {
     var parser = url.host;
     if(parser==='forums.spacebattles.com' || parser==='forums.sufficientvelocity.com') {

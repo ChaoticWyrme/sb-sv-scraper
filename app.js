@@ -7,7 +7,7 @@ const url = require('url'); // node url not WHATWG URL API
 var site = 'https://forums.sufficientvelocity.com/threads/e-l-f-extraterrestrial-lifeform.30454/';
 // DEBUG END
 
-function XFParse(url) { // XenForo Parser
+function XFParse(site) { // XenForo Parser
   var dom;
   // below replace should strip off /threadmarks and /reader from url
   site.href = site.href.replace(/\/(?:reader)|(?:threadmarks)(?:\/(?:page\/[0-9]*\/?)?)?$/,'');
@@ -53,12 +53,14 @@ function parseThread(site,callback) { // will fallback on default parsers if no 
   if(typeof callback !== 'function') {
     var parser = site.host;
     if(parser==='forums.spacebattles.com' || parser==='forums.sufficientvelocity.com') {
-      console.log("parsing...");
+      console.log(`parsing ${site.href}`);
       parser = new XFParse(site);
       console.log("parsing complete.");
       console.log("writing file...");
-      fs.writeFileSync('test.txt',parser.getThreadmarks());
+      var result = parser.getThreadmarks();
+      fs.writeFileSync('test.txt', result);
       console.log("file written");
+      return result;
     }
   } else {
     parser = new callback(site);

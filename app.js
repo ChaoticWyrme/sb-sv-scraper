@@ -2,15 +2,16 @@
 const jsdom = require('jsdom');
 const { JSDOM } = jsdom;
 const fs = require('fs');
+const url = require('url'); // node url not WHATWG URL API
 // DEBUG START
-var url = 'https://forums.sufficientvelocity.com/threads/e-l-f-extraterrestrial-lifeform.30454/';
+var site = 'https://forums.sufficientvelocity.com/threads/e-l-f-extraterrestrial-lifeform.30454/';
 // DEBUG END
 
 function XFParse(url) { // XenForo Parser
   var dom;
   // below replace should strip off /threadmarks and /reader from url
-  url.href = url.href.replace(/\/(?:reader)|(?:threadmarks)(?:\/(?:page\/[0-9]*\/?)?)?$/,'');
-  JSDOM.fromURL(url).then((doc) => {
+  site.href = site.href.replace(/\/(?:reader)|(?:threadmarks)(?:\/(?:page\/[0-9]*\/?)?)?$/,'');
+  JSDOM.fromURL(site.href).then((doc) => {
     dom = doc;
   });
   this.fromFragment = () => { // retrieves element hash links to
@@ -20,7 +21,7 @@ function XFParse(url) { // XenForo Parser
     return dom.querySelectorAll("li[data-author='" + author + "']"); // selects every list item
   }
   this.resetDOM = () => {
-    JSDOM.fromURL(url).then((doc) => {
+    JSDOM.fromURL(site.href).then((doc) => {
       dom = doc;
     });
   }
@@ -32,7 +33,7 @@ function XFParse(url) { // XenForo Parser
   }
   this.getThreadmarks = () => {
     var posts;
-    JSDOM.fromURL(url.href.replace(/\/?$/,'reader')).then((doc) => {
+    JSDOM.fromURL(site.href.replace(/\/?$/,'reader')).then((doc) => {
       dom = doc;
       posts = this.getAllPosts();
       this.resetDOM();
@@ -47,16 +48,16 @@ function XFParse(url) { // XenForo Parser
     return posts;
   }
 }
-function parseThread(url,callback) { // will fallback on default parsers if no callback
-  url = new URL(url); // need to fix this so it will work in node.
+function parseThread(site,callback) { // will fallback on default parsers if no callback
+  site = url.parse(site); // need to fix this so it will work in node.
   if(typeof callback !== 'function') {
-    var parser = url.host;
+    var parser = site.host;
     if(parser==='forums.spacebattles.com' || parser==='forums.sufficientvelocity.com') {
-      parser = new XFParse(url);
+      parser = new XFParse(site);
       fs.writeFileSync('test.txt',parser.getThreadmarks());
     }
   } else {
-    parser = new callback(url);
+    parser = new callback(site);
   }
 }
-parseThread(url);
+parseThread(site);

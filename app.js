@@ -53,8 +53,12 @@ function parseThread(site,callback) { // will fallback on default parsers if no 
   if(typeof callback !== 'function') {
     var parser = site.host;
     if(parser==='forums.spacebattles.com' || parser==='forums.sufficientvelocity.com') {
+      console.log("parsing...");
       parser = new XFParse(site);
+      console.log("parsing complete.");
+      console.log("writing file...");
       fs.writeFileSync('test.txt',parser.getThreadmarks());
+      console.log("file written");
     }
   } else {
     parser = new callback(site);

@@ -49,7 +49,7 @@ function XFParse(url) { // XenForo Parser
   }
 }
 function parseThread(site,callback) { // will fallback on default parsers if no callback
-  site = url.parse(site); // need to fix this so it will work in node.
+  site = url.parse(site);
   if(typeof callback !== 'function') {
     var parser = site.host;
     if(parser==='forums.spacebattles.com' || parser==='forums.sufficientvelocity.com') {

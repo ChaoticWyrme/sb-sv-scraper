@@ -7,7 +7,7 @@ const url = require('url'); // node url not WHATWG URL API
 var site = 'https://forums.sufficientvelocity.com/threads/e-l-f-extraterrestrial-lifeform.30454/';
 // DEBUG END
 
-function XFParse(url) { // XenForo Parser
+function XFParse(site) { // XenForo Parser
   var dom;
   // below replace should strip off /threadmarks and /reader from url
   site.href = site.href.replace(/\/(?:reader)|(?:threadmarks)(?:\/(?:page\/[0-9]*\/?)?)?$/,'');

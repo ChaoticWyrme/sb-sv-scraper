@@ -11,7 +11,7 @@ function XFParse(site) { // XenForo Parser
   var dom;
   // below replace should strip off /threadmarks and /reader from url
   site.href = site.href.replace(/\/(?:reader)|(?:threadmarks)(?:\/(?:page\/[0-9]*\/?)?)?$/,'');
-  jsdom.fromURL(site.href).then((doc) => {
+  JSDOM.fromURL(site.href).then((doc) => {
     dom = doc;
   });
   this.fromFragment = () => { // retrieves element hash links to
@@ -21,7 +21,7 @@ function XFParse(site) { // XenForo Parser
     return dom.querySelectorAll("li[data-author='" + author + "']"); // selects every list item
   }
   this.resetDOM = () => {
-    jsdom.fromURL(site.href).then((doc) => {
+    JSDOM.fromURL(site.href).then((doc) => {
       dom = doc;
     });
   }
@@ -33,7 +33,7 @@ function XFParse(site) { // XenForo Parser
   }
   this.getThreadmarks = () => {
     var posts;
-    jsdom.fromURL(site.href.replace(/\/?$/,'reader')).then((doc) => {
+    JSDOM.fromURL(site.href.replace(/\/?$/,'reader')).then((doc) => {
       dom = doc;
       posts = this.getAllPosts();
       this.resetDOM();

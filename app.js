@@ -7,11 +7,11 @@ const url = require('url'); // node url not WHATWG URL API
 var site = 'https://forums.sufficientvelocity.com/threads/e-l-f-extraterrestrial-lifeform.30454/';
 // DEBUG END
 
-function XFParse(site) { // XenForo Parser
+async function XFParse(site) { // XenForo Parser
   var dom;
   // below replace should strip off /threadmarks and /reader from url
   site.href = site.href.replace(/\/(?:reader)|(?:threadmarks)(?:\/(?:page\/[0-9]*\/?)?)?$/,'');
-  JSDOM.fromURL(site.href).then((doc) => {
+  await JSDOM.fromURL(site.href).then((doc) => {
     dom = doc;
   });
   this.fromFragment = () => { // retrieves element hash links to
@@ -20,10 +20,11 @@ function XFParse(site) { // XenForo Parser
   this.getAuthor = author => {
     return dom.querySelectorAll("li[data-author='" + author + "']"); // selects every list item
   }
-  this.resetDOM = () => {
-    JSDOM.fromURL(site.href).then((doc) => {
+  this.resetDOM = async () => {
+    await JSDOM.fromURL(site.href).then((doc) => {
       dom = doc;
     });
+    return true;
   }
   this.getPostContent = (post) => { // takes input from getAuthor
     var content = post.getElementsByClassName("messageText")[0];
@@ -31,14 +32,14 @@ function XFParse(site) { // XenForo Parser
     if(mark.length > 0) content.removeChild(mark[0]); // if there is an end text marker remove it
     return content;
   }
-  this.getThreadmarks = () => {
+  this.getThreadmarks = async () => {
     var posts;
-    JSDOM.fromURL(site.href.replace(/\/?$/,'reader')).then((doc) => {
+    await JSDOM.fromURL(site.href.replace(/\/?$/,'reader')).then((doc) => {
       dom = doc;
       posts = this.getAllPosts();
       this.resetDOM();
-      return posts;
     });
+    return posts;
   }
   this.getAllPosts = () => {
     var posts = []; // array of strings of posts

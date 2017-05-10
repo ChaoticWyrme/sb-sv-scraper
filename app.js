@@ -10,7 +10,7 @@ var site = 'https://forums.sufficientvelocity.com/threads/e-l-f-extraterrestrial
 async function XFParse(site) { // XenForo Parser
   var dom;
   // below replace should strip off /threadmarks and /reader from url
-  site.href = site.href.replace(/\/(?:reader)|(?:threadmarks)(?:\/(?:page\/[0-9]*\/?)?)?$/,'');
+  site.href = site.href.replace(/\/(?:(?:reader)|(?:threadmarks))\/?(?:page\/[0-9]*\/?)?$/,'');
   await JSDOM.fromURL(site.href).then((doc) => {
     dom = doc;
   });

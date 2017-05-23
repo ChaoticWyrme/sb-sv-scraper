@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/ChaoticWyrme/sb-sv-scraper#readme",
   "dependencies": {
-    "jsdom": "^9.9.1"
+    "jsdom": "^9.9.1",
+    "requisition": "^1.7.0"
   }
 }

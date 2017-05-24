@@ -3,17 +3,18 @@ const jsdom = require('jsdom');
 const { JSDOM } = jsdom;
 const fs = require('fs');
 const url = require('url'); // node url not WHATWG URL API
+const req = require('requisition');
 // DEBUG START
 var site = 'https://forums.sufficientvelocity.com/threads/e-l-f-extraterrestrial-lifeform.30454/';
 // DEBUG END
-
+ 
 async function XFParse(site) { // XenForo Parser
   var dom;
   // below replace should strip off /threadmarks and /reader from url
   site.href = site.href.replace(/\/(?:(?:reader)|(?:threadmarks))\/?(?:page\/[0-9]*\/?)?$/,'');
-  await JSDOM.fromURL(site.href).then((doc) => {
-    dom = doc;
-  });
+  await req(site.href).redirects(10).then((doc) => {
+    dom = jsdom.parse(doc);
+  }).catch(err => {console.log(err);});
   this.fromFragment = () => { // retrieves element hash links to
     return document.getElementById(dom.location.hash.substr(1));
   }
@@ -21,9 +22,9 @@ async function XFParse(site) { // XenForo Parser
     return dom.querySelectorAll("li[data-author='" + author + "']"); // selects every list item
   }
   this.resetDOM = async () => {
-    await JSDOM.fromURL(site.href).then((doc) => {
-      dom = doc;
-    });
+    await req(site.href).then((doc) => {
+      dom = jsdom.parse(doc);
+    }).catch(err => {console.log(err);});
     return true;
   }
   this.getPostContent = (post) => { // takes input from getAuthor
@@ -34,11 +35,11 @@ async function XFParse(site) { // XenForo Parser
   }
   this.getThreadmarks = async () => {
     var posts;
-    await JSDOM.fromURL(site.href.replace(/\/?$/,'reader')).then((doc) => {
-      dom = doc;
+    await req(site.href.replace(/\/?$/,'reader')).redirects(10).then((doc) => {
+      dom = jsdom.parse(doc);
       posts = this.getAllPosts();
       this.resetDOM();
-    });
+    }).catch(err => {console.log(err);});
     return posts;
   }
   this.getAllPosts = () => {
@@ -48,17 +49,18 @@ async function XFParse(site) { // XenForo Parser
     }));
     return posts;
   }
+  return await this.getThreadmarks();
 }
-function parseThread(site,callback) { // will fallback on default parsers if no callback
+async function parseThread(site,callback) { // will fallback on default parsers if no callback
   site = url.parse(site);
   if(typeof callback !== 'function') {
     var parser = site.host;
     if(parser==='forums.spacebattles.com' || parser==='forums.sufficientvelocity.com') {
       console.log("parsing...");
-      parser = new XFParse(site);
+      parser = await XFParse(site);
       console.log("parsing complete.");
       console.log("writing file...");
-      fs.writeFileSync('test.txt',parser.getThreadmarks());
+      fs.writeFileSync('test.txt',parser);
       console.log("file written");
     }
   } else {

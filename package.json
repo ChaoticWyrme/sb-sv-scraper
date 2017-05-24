@@ -25,5 +25,8 @@
   "dependencies": {
     "jsdom": "^9.9.1",
     "requisition": "^1.7.0"
+  },
+  "engines": {
+    { "node" : ">=7.10.0" }
   }
 }

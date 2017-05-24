@@ -13,17 +13,17 @@ async function XFParse(site) { // XenForo Parser
   // below replace should strip off /threadmarks and /reader from url
   site.href = site.href.replace(/\/(?:(?:reader)|(?:threadmarks))\/?(?:page\/[0-9]*\/?)?$/,'');
   await req(site.href).redirects(10).then((doc) => {
-    dom = jsdom.parse(doc);
+    dom = jsdom.jsdom(doc);
   }).catch(err => {console.log(err);});
   this.fromFragment = () => { // retrieves element hash links to
-    return document.getElementById(dom.location.hash.substr(1));
+    return dom.document.getElementById(dom.location.hash.substr(1));
   }
   this.getAuthor = author => {
-    return dom.querySelectorAll("li[data-author='" + author + "']"); // selects every list item
+    return dom.document.querySelectorAll("li[data-author='" + author + "']"); // selects every list item
   }
   this.resetDOM = async () => {
     await req(site.href).then((doc) => {
-      dom = jsdom.parse(doc);
+      dom = jsdom.jsdom(doc);
     }).catch(err => {console.log(err);});
     return true;
   }
@@ -36,7 +36,7 @@ async function XFParse(site) { // XenForo Parser
   this.getThreadmarks = async () => {
     var posts;
     await req(site.href.replace(/\/?$/,'reader')).redirects(10).then((doc) => {
-      dom = jsdom.parse(doc);
+      dom = jsdom.jsdom(doc);
       posts = this.getAllPosts();
       this.resetDOM();
     }).catch(err => {console.log(err);});
@@ -44,7 +44,7 @@ async function XFParse(site) { // XenForo Parser
   }
   this.getAllPosts = () => {
     var posts = []; // array of strings of posts
-    posts.push(dom.getElementsByClassName('message').forEach((post,i,array) => {
+    posts.push(dom.document.getElementsByClassName('message').forEach((post,i,array) => {
       array[i] = this.getPostContent(post);
     }));
     return posts;
